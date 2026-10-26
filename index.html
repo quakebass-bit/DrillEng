@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FSI Drill Trainer</title>
+
+    <!-- PWA Meta & Inline Manifest -->
+    <meta name="theme-color" content="#090a0f" id="meta-theme-color">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FSI Drill">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@600;700&display=swap">
+
+    <style>
+        /* ================= ТЕМА: DARK (БАЗОВАЯ) ================= */
+        :root {
+            --bg-base: #090a0f;
+            --bg-radial: radial-gradient(circle at 85% 35%, #152233 0%, #090a0f 65%);
+            --surface-card: #131620;
+            --surface-active: #1e2333;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f3f8;
+            --text-muted: #657086;
+            --text-title: #ffffff;
+            
+            --accent-green: #00ff88;
+            --accent-green-glow: rgba(0, 255, 136, 0.35);
+            --accent-green-bg: rgba(0, 255, 136, 0.12);
+            --accent-cyan: #00e5ff;
+            --accent-amber: #ffaa00;
+            --accent-red: #ff4d4d;
+            --accent-red-bg: rgba(255, 77, 77, 0.15);
+            
+            --input-bg: #000000;
+            --sheet-bg: #11131a;
+            --shadow-card: 0 10px 24px rgba(0,0,0,0.4);
+        }
+
+        /* ================= ТЕМА: LIGHT ================= */
+        body.light-theme {
+            --bg-base: #f0f2f7;
+            --bg-radial: radial-gradient(circle at 85% 35%, #e1e9f5 0%, #f0f2f7 65%);
+            --surface-card: #ffffff;
+            --surface-active: #e6eaf2;
+            --border-glass: rgba(0, 0, 0, 0.08);
+            --text-main: #1c202a;
+            --text-muted: #727b91;
+            --text-title: #0c0e14;
+            
+            --accent-green: #00ba63;
+            --accent-green-glow: rgba(0, 186, 99, 0.25);
+            --accent-green-bg: rgba(0, 186, 99, 0.12);
+            --accent-cyan: #0088cc;
+            --accent-amber: #d97706;
+            --accent-red: #dc2626;
+            --accent-red-bg: rgba(220, 38, 38, 0.12);
+            
+            --input-bg: #e9ecf2;
+            --sheet-bg: #ffffff;
+            --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        /* ================= ТЕМА: MONO LCD ================= */
+        body.lcd-mono-theme {
+            --bg-base: #a3a8a3;
+            --bg-radial: linear-gradient(180deg, #9da29d 0%, #a3a8a3 100%);
+            --surface-card: #9a9f9a;
+            --surface-active: #8b908b;
+            --border-glass: #4a4d4a;
+            --text-main: #121312;
+            --text-muted: #4a4d4a;
+            --text-title: #0d0e0d;
+            
+            --accent-green: #171817;
+            --accent-green-glow: rgba(18, 19, 18, 0.2);
+            --accent-green-bg: rgba(18, 19, 18, 0.14);
+            --accent-cyan: #121312;
+            --accent-amber: #2c2e2c;
+            --accent-red: #381d1d;
+            --accent-red-bg: rgba(56, 29, 29, 0.18);
+            
+            --input-bg: #8b908b;
+            --sheet-bg: #949994;
+            --shadow-card: 2px 2px 0px #4a4d4a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 460px;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--bg-radial);
+        }
+
+        /* ================= ВЕРХНЯЯ ПАНЕЛЬ ================= */
+        .top-switch-bar {
+            padding: 10px 14px 6px 14px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+            z-index: 30;
+        }
+        .nav-tab-btn {
+            flex: 1;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            box-shadow: var(--shadow-card);
+            letter-spacing: 0.3px;
+        }
+        .nav-tab-btn.active {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        .icon-action-btn {
+            height: 38px;
+            width: 38px;
+            border-radius: 12px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-card);
+            flex-shrink: 0;
+        }
+        .icon-action-btn.active-edit {
+            border-color: var(--accent-amber);
+            color: var(--accent-amber);
+            box-shadow: 0 0 12px var(--accent-amber);
+        }
+        .hidden { display: none !important; }
+
+        /* ================= КОНТЕНТ ================= */
+        .content-viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            padding: 6px 14px 18px 14px;
+        }
+
+        .view-pane {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 10px;
+            position: relative;
+        }
+
+        /* ================= ПАНЕЛЬ НАСТРОЕК И СТАТИСТИКИ ================= */
+        .status-header-bar {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-card);
+            flex-shrink: 0;
+        }
+        .settings-inline {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .modern-select {
+            background: var(--surface-active);
+            border: 1px solid var(--border-glass);
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 9px;
+            outline: none;
+            cursor: pointer;
+        }
+        .stats-inline {
+            display: flex;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .stat-pill {
+            padding: 3px 7px;
+            border-radius: 8px;
+            background: var(--surface-active);
+            border: 1px solid var(--border-glass);
+        }
+
+        /* ================= КАРТОЧКИ ФРОНТ И BACK (ПО ЭСКИЗУ) ================= */
+        .cards-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .card-row {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+        }
+        /* Круглая кнопка озвучки слева от карточки, как на фото */
+        .left-audio-cluster {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .btn-circle-audio {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--surface-card);
+            border: 1.5px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.1s;
+        }
+        .btn-circle-audio:active { transform: scale(0.92); }
+        .btn-circle-audio.muted {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            opacity: 0.7;
+        }
+        .btn-mini-mute {
+            width: 44px;
+            height: 26px;
+            border-radius: 10px;
+            background: var(--surface-active);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drill-card {
+            flex: 1;
+            min-height: 92px;
+            background: var(--surface-card);
+            border: 1.5px solid var(--border-glass);
+            border-radius: 18px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            box-shadow: var(--shadow-card);
+            user-select: text;
+        }
+        .card-label-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-main-text {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text-title);
+            word-break: break-word;
+        }
+        #backCardBox.revealed {
+            border-color: var(--accent-green);
+            background: var(--accent-green-bg);
+        }
+        #backCardBox.unrevealed {
+            opacity: 0.45;
+            border-style: dashed;
+            cursor: pointer;
+        }
+
+        /* Кольцевой мини-таймер в карточке ФРОНТ */
+        .timer-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 8px;
+            background: var(--surface-active);
+            color: var(--accent-cyan);
+        }
+        .timer-badge.expired {
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        /* ================= ОПЦИОНАЛЬНОЕ ПОЛЕ ВВОДА ТЕКСТА ================= */
+        .input-collapsible {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .modern-textarea {
+            width: 100%;
+            min-height: 60px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 10px 12px;
+            resize: none;
+            outline: none;
+            user-select: text;
+        }
+        .modern-textarea:focus {
+            border-color: var(--accent-cyan);
+        }
+        .diff-box {
+            width: 100%;
+            min-height: 54px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        .error-word {
+            background: var(--accent-red-bg);
+            color: var(--accent-red);
+            padding: 1px 5px;
+            border-radius: 5px;
+            text-decoration: underline wavy;
+            font-weight: 700;
+        }
+
+        /* ================= ПЕРЕТАСКИВАЕМЫЙ БЛОК КНОПОК СПРАВА (ПО ЭСКИЗУ) ================= */
+        .workspace-bottom-area {
+            flex: 1;
+            position: relative;
+            min-height: 210px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding-top: 8px;
+        }
+
+        .movable-block {
+            position: relative;
+            touch-action: none;
+            will-change: transform;
+            z-index: 25;
+        }
+        body.edit-mode .movable-block {
+            border: 2px dashed var(--accent-amber) !important;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.35) !important;
+            cursor: grab;
+        }
+        .drag-tag {
+            display: none;
+            position: absolute;
+            top: -13px;
+            right: 10px;
+            background: var(--accent-amber);
+            color: #000;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            z-index: 30;
+        }
+        body.edit-mode .drag-tag { display: block; }
+
+        /* Стек кнопок справа под большой палец, точно как на рисунке в тетради */
+        .right-thumb-stack {
+            width: 195px;
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .thumb-btn {
+            width: 100%;
+            border-radius: 14px;
+            border: 1.5px solid var(--border-glass);
+            font-family: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .thumb-btn:active { transform: scale(0.95); }
+
+        .btn-wrong {
+            height: 52px;
+            background: var(--accent-red-bg);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            font-size: 15px;
+        }
+        .btn-correct {
+            height: 56px;
+            background: var(--accent-green-bg);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            font-size: 16px;
+        }
+        .btn-repeat-sound {
+            height: 76px;
+            background: var(--surface-active);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 15px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        body.lcd-mono-theme .btn-correct {
+            background: #171817 !important;
+            color: #a3a8a3 !important;
+        }
+
+        /* ================= ВКЛАДКА ЗАГРУЗКИ И ВСТАВКИ ТЕКСТА ================= */
+        .loader-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--shadow-card);
+        }
+        .drop-zone {
+            border: 2px dashed var(--accent-cyan);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            background: rgba(0, 229, 255, 0.04);
+            cursor: pointer;
+        }
+        .paste-textarea {
+            width: 100%;
+            height: 160px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 10px 12px;
+            resize: vertical;
+            user-select: text;
+        }
+        .btn-primary-action {
+            height: 46px;
+            border-radius: 14px;
+            background: var(--accent-green);
+            color: #000;
+            font-weight: 800;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px var(--accent-green-glow);
+        }
+        body.lcd-mono-theme .btn-primary-action {
+            background: #171817 !important;
+            color: #a3a8a3 !important;
+        }
+
+        .btn-secondary-action {
+            height: 42px;
+            border-radius: 12px;
+            background: var(--surface-active);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ НАВИГАЦИИ И ИНСТРУМЕНТОВ -->
+    <header class="top-switch-bar">
+        <button class="nav-tab-btn active" id="tab-drill-btn">🎯 ТРЕНАЖЕР</button>
+        <button class="nav-tab-btn" id="tab-load-btn">📥 УРОК / БАЗА</button>
+        <button class="nav-tab-btn" id="tab-errors-btn">⚠️ ОШИБКИ (<span id="err-tab-count">0</span>)</button>
+        <button class="icon-action-btn hidden" id="reset-layout-btn" title="Сбросить позицию кнопок">↺</button>
+        <button class="icon-action-btn" id="edit-layout-btn" title="Двигать блок кнопок">🛠️</button>
+        <button class="icon-action-btn" id="theme-toggle-btn" title="Сменить тему">☀️</button>
+    </header>
+
+    <main class="content-viewport">
+
+        <!-- ВКЛАДКА 1: ТРЕНАЖЕР (FSI DRILL) -->
+        <div class="view-pane" id="pane-drill">
+
+            <!-- Мини-панель настроек и счетчиков -->
+            <div class="status-header-bar">
+                <div class="settings-inline">
+                    <select class="modern-select" id="directionSelect" title="Направление перевода">
+                        <option value="ru-en" selected>RU ➔ EN</option>
+                        <option value="en-ru">EN ➔ RU</option>
+                        <option value="random">MIX 🎲</option>
+                    </select>
+                    <select class="modern-select" id="speechRateSelect" title="Скорость речи">
+                        <option value="0.75">0.75x</option>
+                        <option value="0.9" selected>0.90x</option>
+                        <option value="1.0">1.00x</option>
+                        <option value="1.15">1.15x</option>
+                    </select>
+                    <button class="modern-select" id="toggleInputBtn" title="Показать/скрыть поле ввода текста">⌨️ Ввод</button>
+                </div>
+
+                <div class="stats-inline">
+                    <span class="stat-pill" style="color:var(--accent-green);">✓ <b id="statYes">0</b></span>
+                    <span class="stat-pill" style="color:var(--accent-red);">✕ <b id="statNo">0</b></span>
+                    <span class="stat-pill" style="color:var(--text-muted);">∑ <b id="statLeft">0</b></span>
+                </div>
+            </div>
+
+            <!-- БЛОК КАРТОЧЕК: ФРОНТ И BACK С КНОПКАМИ СЛЕВА -->
+            <div class="cards-stack">
+                <!-- ФРОНТ -->
+                <div class="card-row">
+                    <div class="left-audio-cluster">
+                        <button class="btn-circle-audio" id="btnPlayFront" title="Озвучить ФРОНТ">▶</button>
+                        <button class="btn-mini-mute" id="btnMuteFront" title="Автоозвучка вопроса ВКЛ/ВЫКЛ">🔊</button>
+                    </div>
+                    <div class="drill-card" id="frontCardBox">
+                        <div class="card-label-tag">
+                            <span>ФРОНТ (ВОПРОС)</span>
+                            <span class="timer-badge" id="timerBadge">2.0s</span>
+                        </div>
+                        <div class="card-main-text" id="frontText">Загрузите урок во вкладке «УРОК / БАЗА»</div>
+                    </div>
+                </div>
+
+                <!-- BACK -->
+                <div class="card-row">
+                    <div class="left-audio-cluster">
+                        <button class="btn-circle-audio" id="btnPlayBack" title="Озвучить BACK">▶</button>
+                    </div>
+                    <div class="drill-card unrevealed" id="backCardBox" title="Нажмите, чтобы открыть ответ">
+                        <div class="card-label-tag">
+                            <span>BACK (ОТВЕТ)</span>
+                            <span id="backStatusHint">Нажмите для проверки</span>
+                        </div>
+                        <div class="card-main-text" id="backText">• • •</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ОПЦИОНАЛЬНОЕ ПОЛЕ РУЧНОГО ВВОДА (СКРЫВАЕМОЕ) -->
+            <div class="input-collapsible hidden" id="manualInputWrap">
+                <textarea class="modern-textarea" id="userInput" placeholder="Опционально: введите перевод для сверки по буквам..."></textarea>
+                <div class="diff-box hidden" id="diffBox"></div>
+            </div>
+
+            <!-- НИЖНЯЯ РАБОЧАЯ ЗОНА С ПЕРЕДВИЖНЫМ БЛОКОМ КНОПОК СПРАВА -->
+            <div class="workspace-bottom-area" id="modular-space">
+                <div class="movable-block right-thumb-stack" id="mod-thumb-controls">
+                    <span class="drag-tag">⠿ ДВИГАТЬ ВВЕРХ/ВНИЗ</span>
+
+                    <button class="thumb-btn btn-wrong" id="btnWrong">
+                        <span>✕ Ошибка</span>
+                    </button>
+
+                    <button class="thumb-btn btn-correct" id="btnCorrect">
+                        <span>✓ Верно</span>
+                    </button>
+
+                    <button class="thumb-btn btn-repeat-sound" id="btnRepeatBack">
+                        <span style="font-size:18px;">🔊 Повтор звука</span>
+                        <span style="font-size:11px; opacity:0.8; font-weight:600;">(Озвучить BACK / Открыть)</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ВКЛАДКА 2: ЗАГРУЗКА ФАЙЛА ИЛИ ВСТАВКА УРОКА -->
+        <div class="view-pane hidden" id="pane-load">
+            <div class="loader-card">
+                <div style="font-size:13px; font-weight:800; color:var(--accent-cyan);">
+                    📂 ЗАГРУЗИТЬ ФАЙЛ (.TXT / .MD)
+                </div>
+
+                <label class="drop-zone" id="dropZone">
+                    <div style="font-weight:700; margin-bottom:6px;">Нажмите для выбора файла или перетащите сюда</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Поддерживаются форматы: <b>Фраза ; Перевод</b> и <b>1. Задание -> Перевод</b></div>
+                    <input type="file" id="fileInput" accept=".txt,.md" style="display:none;">
+                </label>
+
+                <div style="font-size:13px; font-weight:800; color:var(--accent-cyan); margin-top:4px;">
+                    📋 ИЛИ ВСТАВЬТЕ ТЕКСТ УРОКА / ОШИБОК НАПРЯМУЮ
+                </div>
+
+                <textarea class="paste-textarea" id="pasteArea" placeholder="Пример 1:&#10;1. Скажи в прошедшем: «Я поднял чашку». -> I picked up the cup.&#10;&#10;Пример 2:&#10;Я поставил чашку на стол ; I put the cup down on the table"></textarea>
+
+                <button class="btn-primary-action" id="btnStartFromPaste">
+                    🚀 ЗАПУСТИТЬ ТРЕНИРОВКУ ИЗ ТЕКСТА
+                </button>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА 3: ОТЧЕТ ПО ОШИБКАМ И ПОВТОРНАЯ ПРОРАБОТКА -->
+        <div class="view-pane hidden" id="pane-errors">
+            <div class="loader-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:800; color:var(--accent-red);">⚠️ СПИСОК ОШИБОК (ГОТОВ К ПОВТОРУ)</span>
+                </div>
+
+                <button class="btn-primary-action" id="btnDrillMistakesNow">
+                    🔥 ПРОРАБОТАТЬ ТОЛЬКО ОШИБКИ СЕЙЧАС
+                </button>
+
+                <div style="font-size:11px; color:var(--text-muted);">
+                    Чистый список в формате <code>Вопрос ; Ответ</code> (можно скопировать или отредактировать):
+                </div>
+                <textarea class="paste-textarea" id="cleanMistakesArea" style="height:125px;" readonly></textarea>
+                <button class="btn-secondary-action" id="btnCopyClean">📋 Скопировать чистый список для вставки</button>
+
+                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                    Подробный лог (с вашим ответом):
+                </div>
+                <textarea class="paste-textarea" id="detailedMistakesArea" style="height:110px;" readonly></textarea>
+                <button class="btn-secondary-action" id="btnCopyDetailed">📋 Скопировать подробный разбор</button>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* ================= 1. PWA INLINE МАНИФЕСТ И SERVICE WORKER ================= */
+    const manifestData = {
+        name: "FSI Drill Trainer",
+        short_name: "FSI Drill",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#090a0f",
+        theme_color: "#090a0f",
+        icons: [{
+            src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23131620'/><text x='50' y='66' font-size='52' text-anchor='middle' fill='%2300ff88' font-family='sans-serif' font-weight='bold'>FSI</text></svg>",
+            sizes: "192x192",
+            type: "image/svg+xml"
+        }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
+    const manifestLink = document.createElement('link');
+    manifestLink.rel = 'manifest';
+    manifestLink.href = URL.createObjectURL(manifestBlob);
+    document.head.appendChild(manifestLink);
+
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => self.clients.claim());
+            self.addEventListener('fetch', e => {});
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    }
+
+    /* ================= 2. ТЕМЫ ОФОРМЛЕНИЯ (ИЗ YTDL-UI) ================= */
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    const themes = ['dark', 'light', 'lcd-mono'];
+    const themeIcons = { 'dark': '☀️', 'light': '🧮', 'lcd-mono': '🌙' };
+
+    function applyTheme(theme) {
+        document.body.classList.remove('light-theme', 'lcd-mono-theme');
+        if (theme === 'light') document.body.classList.add('light-theme');
+        if (theme === 'lcd-mono') document.body.classList.add('lcd-mono-theme');
+        themeBtn.textContent = themeIcons[theme] || '☀️';
+        localStorage.setItem('fsiTheme', theme);
+    }
+
+    let currentTheme = localStorage.getItem('fsiTheme') || 'dark';
+    if (!themes.includes(currentTheme)) currentTheme = 'dark';
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener('click', () => {
+        currentTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+        applyTheme(currentTheme);
+    });
+
+    /* ================= 3. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ================= */
+    const tabs = {
+        drill: { btn: document.getElementById('tab-drill-btn'), pane: document.getElementById('pane-drill') },
+        load:  { btn: document.getElementById('tab-load-btn'),  pane: document.getElementById('pane-load') },
+        errors:{ btn: document.getElementById('tab-errors-btn'),pane: document.getElementById('pane-errors') }
+    };
+
+    function switchTab(targetKey) {
+        Object.keys(tabs).forEach(k => {
+            tabs[k].btn.classList.toggle('active', k === targetKey);
+            tabs[k].pane.classList.toggle('hidden', k !== targetKey);
+        });
+    }
+
+    tabs.drill.btn.addEventListener('click', () => switchTab('drill'));
+    tabs.load.btn.addEventListener('click', () => switchTab('load'));
+    tabs.errors.btn.addEventListener('click', () => {
+        updateMistakesUI();
+        switchTab('errors');
+    });
+
+    /* ================= 4. СВОБОДНОЕ ПЕРЕМЕЩЕНИЕ БЛОКА КНОПОК (ИЗ YTDL-UI) ================= */
+    const editBtn = document.getElementById('edit-layout-btn');
+    const resetBtn = document.getElementById('reset-layout-btn');
+    const thumbCluster = document.getElementById('mod-thumb-controls');
+    const modularSpace = document.getElementById('modular-space');
+    let isEditMode = false;
+
+    let savedPos = JSON.parse(localStorage.getItem('fsiThumbPos') || '{"x":0,"y":0}');
+
+    function applyThumbPos() {
+        thumbCluster.style.transform = `translate(${savedPos.x || 0}px, ${savedPos.y || 0}px)`;
+    }
+    applyThumbPos();
+
+    editBtn.addEventListener('click', () => {
+        isEditMode = !isEditMode;
+        document.body.classList.toggle('edit-mode', isEditMode);
+        editBtn.classList.toggle('active-edit', isEditMode);
+        editBtn.textContent = isEditMode ? '✓' : '🛠️';
+        resetBtn.classList.toggle('hidden', !isEditMode);
+        if (!isEditMode) {
+            localStorage.setItem('fsiThumbPos', JSON.stringify(savedPos));
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        savedPos = { x: 0, y: 0 };
+        localStorage.removeItem('fsiThumbPos');
+        applyThumbPos();
+    });
+
+    let startX = 0, startY = 0, initX = 0, initY = 0;
+
+    const onDragStart = (e) => {
+        if (!isEditMode) return;
+        const p = e.touches ? e.touches[0] : e;
+        startX = p.clientX;
+        startY = p.clientY;
+        initX = savedPos.x || 0;
+        initY = savedPos.y || 0;
+    };
+
+    const onDragMove = (e) => {
+        if (!isEditMode) return;
+        const p = e.touches ? e.touches[0] : e;
+        savedPos.x = initX + (p.clientX - startX);
+        savedPos.y = initY + (p.clientY - startY);
+        applyThumbPos();
+    };
+
+    thumbCluster.addEventListener('touchstart', onDragStart, { passive: true });
+    thumbCluster.addEventListener('touchmove', onDragMove, { passive: true });
+    thumbCluster.addEventListener('mousedown', (e) => {
+        if (!isEditMode) return;
+        onDragStart(e);
+        const mm = (ev) => onDragMove(ev);
+        const mu = () => {
+            window.removeEventListener('mousemove', mm);
+            window.removeEventListener('mouseup', mu);
+        };
+        window.addEventListener('mousemove', mm);
+        window.addEventListener('mouseup', mu);
+    });
+
+    /* ================= 5. КАЧЕСТВЕННАЯ ОЗВУЧКА И ОЧИСТКА ОТ MARKDOWN ================= */
+    let voices = [];
+    function populateVoices() {
+        if ('speechSynthesis' in window) {
+            voices = window.speechSynthesis.getVoices();
+        }
+    }
+    populateVoices();
+    if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+    }
+
+    function pickBestVoice(isRussian) {
+        if (!voices.length && 'speechSynthesis' in window) {
+            voices = window.speechSynthesis.getVoices();
+        }
+        const langPrefix = isRussian ? 'ru' : 'en';
+        const matching = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix));
+        if (!matching.length) return null;
+
+        // Приоритет самым натуральным голосам браузеров (Edge Natural, Google, Apple Enhanced)
+        const priorityKeywords = isRussian
+            ? ['natural', 'svetlana', 'dmitry', 'google', 'milena', 'yuri', 'premium']
+            : ['natural', 'aria', 'guy', 'jenny', 'christopher', 'eric', 'google us english', 'samantha', 'daniel', 'premium'];
+
+        for (const kw of priorityKeywords) {
+            const found = matching.find(v => v.name.toLowerCase().includes(kw));
+            if (found) return found;
+        }
+        return matching[0];
+    }
+
+    // Очищает строку от Markdown-разметки и служебных команд перед подачей в синтезатор речи
+    function cleanTextForSpeech(rawText) {
+        if (!rawText) return '';
+        let t = rawText;
+
+        // Если это русская карточка из урока формата: 1. Скажи в прошедшем: «Я поднял чашку».
+        // Извлекаем саму прямую речь внутри кавычек «...», чтобы диктор не читал номер шага и промпт,
+        // либо читаем целиком без спецсимволов, если кавычек нет.
+        const quoteMatch = t.match(/«([^»]+)»/);
+        if (quoteMatch && /[а-яё]/i.test(t)) {
+            t = quoteMatch[1];
+        } else {
+            // Убираем нумерацию в начале строки ("15. ")
+            t = t.replace(/^\d+[\.\)]\s*/, '');
+        }
+
+        // Вырезаем всю Markdown-разметку: **, *, `, #, ~, _, кавычки «», стрелки ->
+        t = t.replace(/[*`#_~«»"]/g, ' ')
+             .replace(/->|➔/g, ' ')
+             .replace(/\s+/g, ' ')
+             .trim();
+
+        return t;
+    }
+
+    let activeUtterance = null;
+    function speakText(rawText, onFinish) {
+        if (!('speechSynthesis' in window)) {
+            if (onFinish) onFinish();
+            return;
+        }
+        window.speechSynthesis.cancel();
+
+        const cleaned = cleanTextForSpeech(rawText);
+        if (!cleaned) {
+            if (onFinish) onFinish();
+            return;
+        }
+
+        setTimeout(() => {
+            const isRu = /[а-яё]/i.test(cleaned);
+            const utter = new SpeechSynthesisUtterance(' ' + cleaned);
+            activeUtterance = utter;
+
+            utter.lang = isRu ? 'ru-RU' : 'en-US';
+            utter.rate = parseFloat(document.getElementById('speechRateSelect').value || '0.9');
+
+            const bestVoice = pickBestVoice(isRu);
+            if (bestVoice) utter.voice = bestVoice;
+
+            let done = false;
+            const finish = () => {
+                if (!done) {
+                    done = true;
+                    activeUtterance = null;
+                    if (typeof onFinish === 'function') onFinish();
+                }
+            };
+
+            utter.onend = finish;
+            utter.onerror = finish;
+            window.speechSynthesis.speak(utter);
+
+            // Защита от зависания колбэка на мобильных ОС
+            setTimeout(() => {
+                if (activeUtterance === utter) finish();
+            }, Math.max(4000, cleaned.length * 110));
+        }, 15);
+    }
+
+    /* ================= 6. ПАРСЕР УРОКОВ (MARKDOWN "->" И КЛАССИЧЕСКИЙ ";") ================= */
+    function parseLessonContent(rawContent) {
+        const lines = rawContent.split(/\r?\n/);
+        const parsedCards = [];
+
+        for (let line of lines) {
+            let trimmed = line.trim();
+            if (!trimmed) continue;
+
+            // Пропускаем заголовки Markdown (#, ##), горизонтальные линии (---)
+            if (trimmed.startsWith('#') || trimmed.startsWith('---')) continue;
+
+            let left = '', right = '';
+
+            // 1. Формат урока Markdown со стрелкой "->" или "➔"
+            if (trimmed.includes('->') || trimmed.includes('➔')) {
+                const parts = trimmed.split(/->|➔/);
+                if (parts.length >= 2) {
+                    left = parts[0].trim();
+                    right = parts.slice(1).join(' ').trim();
+                }
+            }
+            // 2. Классический формат с точкой с запятой ";" или табуляцией
+            else if (trimmed.includes(';') || trimmed.includes('\t')) {
+                const parts = trimmed.split(/;|\t/);
+                if (parts.length >= 2) {
+                    left = parts[0].trim();
+                    right = parts.slice(1).join(';').trim();
+                }
+            }
+
+            if (left && right) {
+                // Очищаем от лишних звездочек/обратных кавычек вокруг фраз
+                left = left.replace(/^\d+[\.\)]\s*/, '').replace(/[**`]/g, '').trim();
+                right = right.replace(/[**`]/g, '').trim();
+                parsedCards.push({ ru: left, en: right });
+            }
+        }
+        return parsedCards;
+    }
+
+    /* ================= 7. ЛОГИКА ТРЕНАЖЕРА И КАРТОЧЕК ================= */
+    let deck = [];
+    let currentIdx = 0;
+    let currentCard = null;
+    let isBackRevealed = false;
+    let isFrontAutoAudio = true;
+    let stats = { yes: 0, no: 0 };
+    let cleanMistakes = [];
+    let detailedMistakes = [];
+
+    // Таймер 2.0 сек
+    let timerId = null;
+    let timeLeft = 2.0;
+    const timerBadge = document.getElementById('timerBadge');
+
+    function startTimer() {
+        clearInterval(timerId);
+        timeLeft = 2.0;
+        timerBadge.classList.remove('expired');
+        timerBadge.textContent = '2.0s';
+
+        timerId = setInterval(() => {
+            timeLeft -= 0.1;
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                clearInterval(timerId);
+                timerBadge.textContent = '0.0s';
+                timerBadge.classList.add('expired');
+            } else {
+                timerBadge.textContent = timeLeft.toFixed(1) + 's';
+            }
+        }, 100);
+    }
+
+    function stopTimer() {
+        clearInterval(timerId);
+    }
+
+    const frontTextEl = document.getElementById('frontText');
+    const backTextEl = document.getElementById('backText');
+    const backCardBox = document.getElementById('backCardBox');
+    const backStatusHint = document.getElementById('backStatusHint');
+    const userInput = document.getElementById('userInput');
+    const diffBox = document.getElementById('diffBox');
+
+    function updateCountersUI() {
+        document.getElementById('statYes').textContent = stats.yes;
+        document.getElementById('statNo').textContent = stats.no;
+        document.getElementById('statLeft').textContent = Math.max(0, deck.length - currentIdx);
+        document.getElementById('err-tab-count').textContent = cleanMistakes.length;
+    }
+
+    function startSession(cardsArray) {
+        if (!cardsArray || !cardsArray.length) {
+            alert('Не удалось найти карточки. Проверьте формат (Фраза ; Перевод или Задание -> Перевод).');
+            return;
+        }
+        deck = cardsArray;
+        currentIdx = 0;
+        stats = { yes: 0, no: 0 };
+        cleanMistakes = [];
+        detailedMistakes = [];
+        updateCountersUI();
+        switchTab('drill');
+        loadNextCard();
+    }
+
+    function loadNextCard() {
+        stopTimer();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+        if (currentIdx >= deck.length) {
+            frontTextEl.textContent = '🎉 Тренировка завершена!';
+            backTextEl.textContent = cleanMistakes.length
+                ? `Ошибок: ${cleanMistakes.length}. Перейдите во вкладку «ОШИБКИ», чтобы проработать их!`
+                : 'Идеально! Ни одной ошибки.';
+            backCardBox.classList.remove('unrevealed');
+            backCardBox.classList.add('revealed');
+            updateMistakesUI();
+            if (cleanMistakes.length > 0) {
+                setTimeout(() => switchTab('errors'), 600);
+            }
+            return;
+        }
+
+        isBackRevealed = false;
+        const item = deck[currentIdx];
+        let dir = document.getElementById('directionSelect').value;
+        if (dir === 'random') dir = Math.random() > 0.5 ? 'ru-en' : 'en-ru';
+
+        currentCard = dir === 'ru-en'
+            ? { q: item.ru, a: item.en }
+            : { q: item.en, a: item.ru };
+
+        currentIdx++;
+        updateCountersUI();
+
+        frontTextEl.textContent = currentCard.q;
+        backTextEl.textContent = '• • •';
+        backStatusHint.textContent = 'Нажмите для проверки';
+        backCardBox.classList.add('unrevealed');
+        backCardBox.classList.remove('revealed');
+
+        userInput.value = '';
+        userInput.classList.remove('hidden');
+        diffBox.classList.add('hidden');
+        diffBox.innerHTML = '';
+
+        if (isFrontAutoAudio) {
+            timerBadge.textContent = '🔊';
+            speakText(currentCard.q, () => {
+                if (!isBackRevealed) startTimer();
+            });
+        } else {
+            startTimer();
+        }
+    }
+
+    function revealBackCard(playAudio = true) {
+        if (!currentCard) return;
+        stopTimer();
+        isBackRevealed = true;
+
+        backTextEl.textContent = currentCard.a;
+        backStatusHint.textContent = 'Ответ открыт';
+        backCardBox.classList.remove('unrevealed');
+        backCardBox.classList.add('revealed');
+
+        // Если пользователь вводил текст руками — подсвечиваем ошибки как в engТренажер
+        const typed = userInput.value.trim();
+        if (typed) {
+            const uWords = typed.split(/\s+/);
+            const cWords = currentCard.a.split(/\s+/);
+            let html = '';
+            uWords.forEach((uw, i) => {
+                const cw = cWords[i] || '';
+                const cleanU = uw.toLowerCase().replace(/[^\wа-яё]/gi, '');
+                const cleanC = cw.toLowerCase().replace(/[^\wа-яё]/gi, '');
+                if (cleanU !== cleanC) {
+                    html += `<span class="error-word">${uw}</span> `;
+                } else {
+                    html += `${uw} `;
+                }
+            });
+            diffBox.innerHTML = html.trim();
+            userInput.classList.add('hidden');
+            diffBox.classList.remove('hidden');
+        }
+
+        if (playAudio) {
+            speakText(currentCard.a);
+        }
+    }
+
+    /* ================= 8. ОБРАБОТЧИКИ КНОПОК УПРАВЛЕНИЯ ================= */
+    // Кнопка "Повтор звука" (нижняя в правом блоке):
+    // Если карточка BACK еще закрыта — открывает её и озвучивает BACK. Если открыта — повторяет озвучку BACK.
+    document.getElementById('btnRepeatBack').addEventListener('click', () => {
+        if (isEditMode || !currentCard) return;
+        if (!isBackRevealed) {
+            revealBackCard(true);
+        } else {
+            speakText(currentCard.a);
+        }
+    });
+
+    // Клик по самой карточке BACK
+    backCardBox.addEventListener('click', () => {
+        if (!currentCard) return;
+        revealBackCard(true);
+    });
+
+    // Круглые кнопки озвучки слева от карточек (как на рисунке)
+    document.getElementById('btnPlayFront').addEventListener('click', () => {
+        if (currentCard) speakText(currentCard.q);
+    });
+
+    document.getElementById('btnPlayBack').addEventListener('click', () => {
+        if (!currentCard) return;
+        if (!isBackRevealed) {
+            revealBackCard(true);
+        } else {
+            speakText(currentCard.a);
+        }
+    });
+
+    // Кнопка включения/отключения автоозвучки вопроса
+    const btnMuteFront = document.getElementById('btnMuteFront');
+    btnMuteFront.addEventListener('click', () => {
+        isFrontAutoAudio = !isFrontAutoAudio;
+        btnMuteFront.textContent = isFrontAutoAudio ? '🔊' : '🔇';
+        btnMuteFront.style.color = isFrontAutoAudio ? 'var(--accent-cyan)' : 'var(--accent-red)';
+        if (!isFrontAutoAudio && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    });
+
+    // Кнопка "Верно"
+    document.getElementById('btnCorrect').addEventListener('click', () => {
+        if (isEditMode || !currentCard) return;
+        stats.yes++;
+        loadNextCard();
+    });
+
+    // Кнопка "Ошибка"
+    document.getElementById('btnWrong').addEventListener('click', () => {
+        if (isEditMode || !currentCard) return;
+        stats.no++;
+        const typed = userInput.value.trim() || '[устный ответ]';
+        cleanMistakes.push(`${currentCard.q} ; ${currentCard.a}`);
+        detailedMistakes.push(`Вопрос: ${currentCard.q}\nПравильно: ${currentCard.a}\nВаш ответ: ${typed}`);
+        updateMistakesUI();
+        loadNextCard();
+    });
+
+    // Показать/скрыть поле ручного ввода
+    const manualInputWrap = document.getElementById('manualInputWrap');
+    document.getElementById('toggleInputBtn').addEventListener('click', () => {
+        manualInputWrap.classList.toggle('hidden');
+    });
+
+    /* ================= 9. ЗАГРУЗКА ФАЙЛОВ, ВСТАВКА И ОТРАБОТКА ОШИБОК ================= */
+    const fileInput = document.getElementById('fileInput');
+    const pasteArea = document.getElementById('pasteArea');
+
+    function handleFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            pasteArea.value = content;
+            const parsed = parseLessonContent(content);
+            startSession(parsed);
+        };
+        reader.readAsText(file);
+    }
+
+    fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+    const dropZone = document.getElementById('dropZone');
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    document.getElementById('btnStartFromPaste').addEventListener('click', () => {
+        const text = pasteArea.value.trim();
+        if (!text) {
+            alert('Сначала вставьте текст урока или список фраз в поле!');
+            return;
+        }
+        const parsed = parseLessonContent(text);
+        startSession(parsed);
+    });
+
+    // Обновление списков ошибок
+    const cleanMistakesArea = document.getElementById('cleanMistakesArea');
+    const detailedMistakesArea = document.getElementById('detailedMistakesArea');
+
+    function updateMistakesUI() {
+        document.getElementById('err-tab-count').textContent = cleanMistakes.length;
+        cleanMistakesArea.value = cleanMistakes.join('\n');
+        detailedMistakesArea.value = detailedMistakes.join('\n\n');
+    }
+
+    // Запуск тренировки сразу по текущим ошибкам в один клик
+    document.getElementById('btnDrillMistakesNow').addEventListener('click', () => {
+        const text = cleanMistakesArea.value.trim();
+        if (!text) {
+            alert('Список ошибок пока пуст!');
+            return;
+        }
+        pasteArea.value = text;
+        const parsed = parseLessonContent(text);
+        startSession(parsed);
+    });
+
+    // Копирование в буфер
+    function bindCopy(btnId, areaEl) {
+        const btn = document.getElementById(btnId);
+        btn.addEventListener('click', () => {
+            if (!areaEl.value) return;
+            navigator.clipboard.writeText(areaEl.value).then(() => {
+                const orig = btn.textContent;
+                btn.textContent = '✅ Скопировано!';
+                setTimeout(() => btn.textContent = orig, 1800);
+            });
+        });
+    }
+    bindCopy('btnCopyClean', cleanMistakesArea);
+    bindCopy('btnCopyDetailed', detailedMistakesArea);
+
+    /* ================= 10. ГОРЯЧИЕ КЛАВИШИ ДЛЯ ПК ================= */
+    document.addEventListener('keydown', (e) => {
+        if (tabs.drill.pane.classList.contains('hidden')) return;
+        if (document.activeElement === userInput && e.key !== 'Enter') return;
+
+        if (e.code === 'Space') {
+            e.preventDefault();
+            document.getElementById('btnRepeatBack').click();
+        } else if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (!isBackRevealed) revealBackCard(true);
+            else document.getElementById('btnCorrect').click();
+        } else if (e.key === 'Escape' || e.key === '1') {
+            e.preventDefault();
+            document.getElementById('btnWrong').click();
+        }
+    });
+
+    /* ================= 11. ДЕМО- КАРТОЧКИ ПРИ ПЕРВОМ ОТКРЫТИИ ================= */
+    const demoText = `1. Скажи в прошедшем: «Я поднял чашку со стола». -> I picked up the cup.
+2. Скажи о действии прямо сейчас: «Я поднимаю чашку». -> I'm picking up the cup.
+3. Спроси о возможности: «Ты можешь поднять чашку?» -> Can you pick up the cup?
+4. Я поставил чашку на стол ; I put the cup down on the table.`;
+    pasteArea.value = demoText;
+    startSession(parseLessonContent(demoText));
+});
+</script>
+</body>
+</html>
