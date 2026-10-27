@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -554,12 +554,12 @@
 
     <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ НАВИГАЦИИ И ИНСТРУМЕНТОВ -->
     <header class="top-switch-bar">
-        <button class="nav-tab-btn active" id="tab-drill-btn">🎯 ТРЕНАЖЕР</button>
-        <button class="nav-tab-btn" id="tab-load-btn">📥 УРОК / БАЗА</button>
-        <button class="nav-tab-btn" id="tab-errors-btn">⚠️ ОШИБКИ (<span id="err-tab-count">0</span>)</button>
-        <button class="icon-action-btn hidden" id="reset-layout-btn" title="Сбросить позицию кнопок">↺</button>
-        <button class="icon-action-btn" id="edit-layout-btn" title="Двигать блок кнопок">🛠️</button>
-        <button class="icon-action-btn" id="theme-toggle-btn" title="Сменить тему">☀️</button>
+        <button class="nav-tab-btn active" id="tab-drill-btn">🎯 TRAINER</button>
+        <button class="nav-tab-btn" id="tab-load-btn">📥 LESSON / DATA</button>
+        <button class="nav-tab-btn" id="tab-errors-btn">⚠️ MISTAKES (<span id="err-tab-count">0</span>)</button>
+        <button class="icon-action-btn hidden" id="reset-layout-btn" title="Reset buttons position">↺</button>
+        <button class="icon-action-btn" id="edit-layout-btn" title="Move buttons block">🛠️</button>
+        <button class="icon-action-btn" id="theme-toggle-btn" title="Toggle theme">☀️</button>
     </header>
 
     <main class="content-viewport">
@@ -570,18 +570,18 @@
             <!-- Мини-панель настроек и счетчиков -->
             <div class="status-header-bar">
                 <div class="settings-inline">
-                    <select class="modern-select" id="directionSelect" title="Направление перевода">
+                    <select class="modern-select" id="directionSelect" title="Translation direction">
                         <option value="ru-en" selected>RU ➔ EN</option>
                         <option value="en-ru">EN ➔ RU</option>
                         <option value="random">MIX 🎲</option>
                     </select>
-                    <select class="modern-select" id="speechRateSelect" title="Скорость речи">
+                    <select class="modern-select" id="speechRateSelect" title="Speech rate">
                         <option value="0.75">0.75x</option>
                         <option value="0.9" selected>0.90x</option>
                         <option value="1.0">1.00x</option>
                         <option value="1.15">1.15x</option>
                     </select>
-                    <button class="modern-select" id="toggleInputBtn" title="Показать/скрыть поле ввода текста">⌨️ Ввод</button>
+                    <button class="modern-select" id="toggleInputBtn" title="Show/hide text input">⌨️ Input</button>
                 </div>
 
                 <div class="stats-inline">
@@ -596,27 +596,27 @@
                 <!-- ФРОНТ -->
                 <div class="card-row">
                     <div class="left-audio-cluster">
-                        <button class="btn-circle-audio" id="btnPlayFront" title="Озвучить ФРОНТ">▶</button>
-                        <button class="btn-mini-mute" id="btnMuteFront" title="Автоозвучка вопроса ВКЛ/ВЫКЛ">🔊</button>
+                        <button class="btn-circle-audio" id="btnPlayFront" title="Play FRONT audio">▶</button>
+                        <button class="btn-mini-mute" id="btnMuteFront" title="Auto-play question ON/OFF">🔊</button>
                     </div>
                     <div class="drill-card" id="frontCardBox">
                         <div class="card-label-tag">
-                            <span>ФРОНТ (ВОПРОС)</span>
+                            <span>FRONT (PROMPT)</span>
                             <span class="timer-badge" id="timerBadge">2.0s</span>
                         </div>
-                        <div class="card-main-text" id="frontText">Загрузите урок во вкладке «УРОК / БАЗА»</div>
+                        <div class="card-main-text" id="frontText">Load a lesson in the "LESSON / DATA" tab</div>
                     </div>
                 </div>
 
                 <!-- BACK -->
                 <div class="card-row">
                     <div class="left-audio-cluster">
-                        <button class="btn-circle-audio" id="btnPlayBack" title="Озвучить BACK">▶</button>
+                        <button class="btn-circle-audio" id="btnPlayBack" title="Play BACK audio">▶</button>
                     </div>
-                    <div class="drill-card unrevealed" id="backCardBox" title="Нажмите, чтобы открыть ответ">
+                    <div class="drill-card unrevealed" id="backCardBox" title="Click to reveal answer">
                         <div class="card-label-tag">
-                            <span>BACK (ОТВЕТ)</span>
-                            <span id="backStatusHint">Нажмите для проверки</span>
+                            <span>BACK (ANSWER)</span>
+                            <span id="backStatusHint">Click to check</span>
                         </div>
                         <div class="card-main-text" id="backText">• • •</div>
                     </div>
@@ -625,26 +625,26 @@
 
             <!-- ОПЦИОНАЛЬНОЕ ПОЛЕ РУЧНОГО ВВОДА (СКРЫВАЕМОЕ) -->
             <div class="input-collapsible hidden" id="manualInputWrap">
-                <textarea class="modern-textarea" id="userInput" placeholder="Опционально: введите перевод для сверки по буквам..."></textarea>
+                <textarea class="modern-textarea" id="userInput" placeholder="Optional: type your translation to check spelling..."></textarea>
                 <div class="diff-box hidden" id="diffBox"></div>
             </div>
 
             <!-- НИЖНЯЯ РАБОЧАЯ ЗОНА С ПЕРЕДВИЖНЫМ БЛОКОМ КНОПОК СПРАВА -->
             <div class="workspace-bottom-area" id="modular-space">
                 <div class="movable-block right-thumb-stack" id="mod-thumb-controls">
-                    <span class="drag-tag">⠿ ДВИГАТЬ ВВЕРХ/ВНИЗ</span>
+                    <span class="drag-tag">⠿ DRAG UP/DOWN</span>
 
                     <button class="thumb-btn btn-wrong" id="btnWrong">
-                        <span>✕ Ошибка</span>
+                        <span>✕ Mistake</span>
                     </button>
 
                     <button class="thumb-btn btn-correct" id="btnCorrect">
-                        <span>✓ Верно</span>
+                        <span>✓ Correct</span>
                     </button>
 
                     <button class="thumb-btn btn-repeat-sound" id="btnRepeatBack">
-                        <span style="font-size:18px;">🔊 Повтор звука</span>
-                        <span style="font-size:11px; opacity:0.8; font-weight:600;">(Озвучить BACK / Открыть)</span>
+                        <span style="font-size:18px;">🔊 Repeat Audio</span>
+                        <span style="font-size:11px; opacity:0.8; font-weight:600;">(Play BACK / Reveal)</span>
                     </button>
                 </div>
             </div>
@@ -655,23 +655,23 @@
         <div class="view-pane hidden" id="pane-load">
             <div class="loader-card">
                 <div style="font-size:13px; font-weight:800; color:var(--accent-cyan);">
-                    📂 ЗАГРУЗИТЬ ФАЙЛ (.TXT / .MD)
+                    📂 UPLOAD FILE (.TXT / .MD)
                 </div>
 
                 <label class="drop-zone" id="dropZone">
-                    <div style="font-weight:700; margin-bottom:6px;">Нажмите для выбора файла или перетащите сюда</div>
-                    <div style="font-size:11px; color:var(--text-muted);">Поддерживаются форматы: <b>Фраза ; Перевод</b> и <b>1. Задание -> Перевод</b></div>
+                    <div style="font-weight:700; margin-bottom:6px;">Click to choose a file or drag & drop here</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Supported formats: <b>Phrase ; Translation</b> and <b>1. Prompt -> Translation</b></div>
                     <input type="file" id="fileInput" accept=".txt,.md" style="display:none;">
                 </label>
 
                 <div style="font-size:13px; font-weight:800; color:var(--accent-cyan); margin-top:4px;">
-                    📋 ИЛИ ВСТАВЬТЕ ТЕКСТ УРОКА / ОШИБОК НАПРЯМУЮ
+                    📋 OR PASTE LESSON / MISTAKES TEXT DIRECTLY
                 </div>
 
-                <textarea class="paste-textarea" id="pasteArea" placeholder="Пример 1:&#10;1. Скажи в прошедшем: «Я поднял чашку». -> I picked up the cup.&#10;&#10;Пример 2:&#10;Я поставил чашку на стол ; I put the cup down on the table"></textarea>
+                <textarea class="paste-textarea" id="pasteArea" placeholder="Example 1:&#10;1. Скажи в прошедшем: «Я поднял чашку». -> I picked up the cup.&#10;&#10;Example 2:&#10;Я поставил чашку на стол ; I put the cup down on the table"></textarea>
 
                 <button class="btn-primary-action" id="btnStartFromPaste">
-                    🚀 ЗАПУСТИТЬ ТРЕНИРОВКУ ИЗ ТЕКСТА
+                    🚀 START TRAINING FROM TEXT
                 </button>
             </div>
         </div>
@@ -680,24 +680,24 @@
         <div class="view-pane hidden" id="pane-errors">
             <div class="loader-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:13px; font-weight:800; color:var(--accent-red);">⚠️ СПИСОК ОШИБОК (ГОТОВ К ПОВТОРУ)</span>
+                    <span style="font-size:13px; font-weight:800; color:var(--accent-red);">⚠️ MISTAKES LIST (READY TO RETRY)</span>
                 </div>
 
                 <button class="btn-primary-action" id="btnDrillMistakesNow">
-                    🔥 ПРОРАБОТАТЬ ТОЛЬКО ОШИБКИ СЕЙЧАС
+                    🔥 DRILL MISTAKES ONLY NOW
                 </button>
 
                 <div style="font-size:11px; color:var(--text-muted);">
-                    Чистый список в формате <code>Вопрос ; Ответ</code> (можно скопировать или отредактировать):
+                    Clean list in <code>Prompt ; Answer</code> format (can be copied or edited):
                 </div>
                 <textarea class="paste-textarea" id="cleanMistakesArea" style="height:125px;" readonly></textarea>
-                <button class="btn-secondary-action" id="btnCopyClean">📋 Скопировать чистый список для вставки</button>
+                <button class="btn-secondary-action" id="btnCopyClean">📋 Copy clean list for pasting</button>
 
                 <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
-                    Подробный лог (с вашим ответом):
+                    Detailed log (with your answer):
                 </div>
                 <textarea class="paste-textarea" id="detailedMistakesArea" style="height:110px;" readonly></textarea>
-                <button class="btn-secondary-action" id="btnCopyDetailed">📋 Скопировать подробный разбор</button>
+                <button class="btn-secondary-action" id="btnCopyDetailed">📋 Copy detailed report</button>
             </div>
         </div>
 
@@ -1041,7 +1041,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startSession(cardsArray) {
         if (!cardsArray || !cardsArray.length) {
-            alert('Не удалось найти карточки. Проверьте формат (Фраза ; Перевод или Задание -> Перевод).');
+            alert('No cards found. Check the format (Phrase ; Translation or Prompt -> Translation).');
             return;
         }
         deck = cardsArray;
@@ -1059,10 +1059,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
         if (currentIdx >= deck.length) {
-            frontTextEl.textContent = '🎉 Тренировка завершена!';
+            frontTextEl.textContent = '🎉 Workout complete!';
             backTextEl.textContent = cleanMistakes.length
-                ? `Ошибок: ${cleanMistakes.length}. Перейдите во вкладку «ОШИБКИ», чтобы проработать их!`
-                : 'Идеально! Ни одной ошибки.';
+                ? `Mistakes: ${cleanMistakes.length}. Go to the "MISTAKES" tab to drill them!`
+                : 'Perfect! Zero mistakes.';
             backCardBox.classList.remove('unrevealed');
             backCardBox.classList.add('revealed');
             updateMistakesUI();
@@ -1086,7 +1086,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         frontTextEl.textContent = currentCard.q;
         backTextEl.textContent = '• • •';
-        backStatusHint.textContent = 'Нажмите для проверки';
+        backStatusHint.textContent = 'Click to check';
         backCardBox.classList.add('unrevealed');
         backCardBox.classList.remove('revealed');
 
@@ -1111,7 +1111,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isBackRevealed = true;
 
         backTextEl.textContent = currentCard.a;
-        backStatusHint.textContent = 'Ответ открыт';
+        backStatusHint.textContent = 'Answer revealed';
         backCardBox.classList.remove('unrevealed');
         backCardBox.classList.add('revealed');
 
@@ -1195,9 +1195,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnWrong').addEventListener('click', () => {
         if (isEditMode || !currentCard) return;
         stats.no++;
-        const typed = userInput.value.trim() || '[устный ответ]';
+        const typed = userInput.value.trim() || '[spoken answer]';
         cleanMistakes.push(`${currentCard.q} ; ${currentCard.a}`);
-        detailedMistakes.push(`Вопрос: ${currentCard.q}\nПравильно: ${currentCard.a}\nВаш ответ: ${typed}`);
+        detailedMistakes.push(`Prompt: ${currentCard.q}\nCorrect: ${currentCard.a}\nYour answer: ${typed}`);
         updateMistakesUI();
         loadNextCard();
     });
@@ -1236,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnStartFromPaste').addEventListener('click', () => {
         const text = pasteArea.value.trim();
         if (!text) {
-            alert('Сначала вставьте текст урока или список фраз в поле!');
+            alert('Please paste lesson text or phrase list into the box first!');
             return;
         }
         const parsed = parseLessonContent(text);
@@ -1257,7 +1257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnDrillMistakesNow').addEventListener('click', () => {
         const text = cleanMistakesArea.value.trim();
         if (!text) {
-            alert('Список ошибок пока пуст!');
+            alert('Mistakes list is currently empty!');
             return;
         }
         pasteArea.value = text;
@@ -1272,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!areaEl.value) return;
             navigator.clipboard.writeText(areaEl.value).then(() => {
                 const orig = btn.textContent;
-                btn.textContent = '✅ Скопировано!';
+                btn.textContent = '✅ Copied!';
                 setTimeout(() => btn.textContent = orig, 1800);
             });
         });
